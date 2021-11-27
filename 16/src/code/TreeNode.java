@@ -23,12 +23,14 @@ public class TreeNode {
 	//depth
 	public int depth;
 	//cost
-	public double cost;
+	public double actualCost;
+	public double hCost;
 	//carried hostages damages
 	public ArrayList<Integer> carried;
+	public int droppedHos;
 	
 	public TreeNode(TreeNode parent,ArrayList<TreeNode> prevNodes, Location myLoc, int neoD, String grid, int kills, int deaths, 
-			 String op, int d, double cost, ArrayList<Integer> carried) {
+			 String op, int d, double actualCost, double hCost, ArrayList<Integer> carried, int droppedHos) {
 		
 		this.parent = parent;
 		this.prevNodes = prevNodes;
@@ -39,8 +41,10 @@ public class TreeNode {
 		this.deaths = deaths;
 		this.operator = op;
 		this.depth= d;
-		this.cost = cost;
+		this.actualCost = actualCost;
+		this.hCost = hCost;
 		this.carried = carried;
+		this.droppedHos = droppedHos;
 		
 	}
 	

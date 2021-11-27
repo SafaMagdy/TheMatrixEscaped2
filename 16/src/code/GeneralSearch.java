@@ -28,10 +28,12 @@ public abstract class GeneralSearch {
 			// number
 			ArrayList<Integer> carried = new ArrayList<Integer>();
 
-			// TO-DO: cost
+			// TODO cost
 			// create initial starting node
-			TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, carried);
-			PreNode startPre = new PreNode("Start", neo, start, 0, 0);
+			TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0,0, carried, 0);
+			double startAcost = calculateActualCost(start, "Start");
+			start.actualCost = startAcost;
+			PreNode startPre = new PreNode("Start", neo, start, startAcost, 0, strategy);
 
 			// add to the array of previous nodes to check for repeated states
 			prevNodes.add(start);
@@ -46,7 +48,8 @@ public abstract class GeneralSearch {
 
 			// try to favor carry and kill mutant
 			// create the queue for search
-			Queue queue;
+			Queue queue = null;
+			PrQ pqueue = null;
 			switch (strategy) {
 			case ("DF"):
 				queue = new DFQueue();
@@ -73,6 +76,9 @@ public abstract class GeneralSearch {
 			case ("BF"):
 				queue = new BFQueue();
 				break;
+			case ("UC"):
+				pqueue = new PrQ();
+				break;
 			default:
 				// temporary
 				queue = new DFQueue();
@@ -83,34 +89,49 @@ public abstract class GeneralSearch {
 				if (!(possibleActions.get(i).contains("kill"))) {
 					String[] pa = possibleActions.get(i).split(",");
 					Location affected = new Location(Integer.parseInt(pa[1]), Integer.parseInt(pa[2]));
-					PreNode pn = new PreNode(pa[0], affected, start, 0, 0);
-					queue.enqueue(pn);
+					double actualCost = calculateActualCost(start, pa[0]);
+					PreNode pn = new PreNode(pa[0], affected, start, actualCost, 0, strategy);
+					if (strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID")) {
+						queue.enqueue(pn);
+					}else {
+						pqueue.enqueue(pn);
+					}
+					
 				} else {
 					// enqueue once and handle number of kills inside update
 					String[] pk = possibleActions.get(i).split(";");
 					String[] pa = pk[0].split(",");
-					PreNode pn = new PreNode(pa[0], neo, start, 0, 0);
-					queue.enqueue(pn);
+					double actualCost = calculateActualCost(start, possibleActions.get(i));
+					PreNode pn = new PreNode(pa[0], neo, start, actualCost, 0, strategy);
+					if (strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID")) {
+						queue.enqueue(pn);
+					}else {
+						pqueue.enqueue(pn);
+					}
 				}
 			}
-
-			if (visualize) {
-				System.out.println("The possible action(s) available at this cell is/are (as ordered in the queue): ");
-				queue.display();
-			}
+			//if (visualize) {
+			//	System.out.println("The possible action(s) available at this cell is/are (as ordered in the queue): ");
+			//	queue.display();
+			//}
 
 			boolean failed = false;
 			String finalGrid = "";
 
-			FileWriter fw = null;
-			BufferedWriter bw = null;
-			PrintWriter writer = null;
-			while (!queue.queue.isEmpty()) {
+			//FileWriter fw = null;
+			//BufferedWriter bw = null;
+			//PrintWriter writer = null;
+			while (((strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID"))&&(!queue.queue.isEmpty())) ||
+					((strategy.equals("UC") || strategy.contains("GR") || strategy.contains("AS"))&&(!pqueue.queue.isEmpty()))) {
 				if (visualize) {
 					System.out.println("Removing a PreNode from the queue ");
 				}
-
-				PreNode frontPreNode = queue.dequeue();
+				PreNode frontPreNode;
+				if (strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID")) {
+					frontPreNode = queue.dequeue();
+				}else {
+					frontPreNode = pqueue.dequeue();
+				}
 
 				if (visualize) {
 					System.out.println("The prenode: " + frontPreNode.action);
@@ -120,6 +141,7 @@ public abstract class GeneralSearch {
 				TreeNode frontTreeNode = update(
 						frontPreNode.action + "," + frontPreNode.affectedCell.x + "," + frontPreNode.affectedCell.y,
 						frontPreNode.prevNode, prevNodes);
+				frontTreeNode.actualCost = frontPreNode.actualCost;
 				// check if gameOver
 				if (gameOver(frontTreeNode.neoDamage)) {
 					System.out.println("Game Over at this path");
@@ -129,7 +151,6 @@ public abstract class GeneralSearch {
 				// check if goal
 				// return the requirements of solve
 				if (isItGoal(frontTreeNode)) {
-
 					result = "";
 					System.out.println("Daret ya syaaaa3");
 					ArrayList<String> goalPath = new ArrayList<String>();
@@ -149,7 +170,7 @@ public abstract class GeneralSearch {
 					return result += ";" + frontTreeNode.deaths + ";" + frontTreeNode.kills + ";" + prevNodes.size();
 				}
 
-				// TO-DO: check if this is a valid check for repeated states
+				// TODO check if this is a valid check for repeated states
 
 				for (int i = 0; i < prevNodes.size(); i++) {
 					if (frontTreeNode.myLoc.x == prevNodes.get(i).myLoc.x
@@ -231,17 +252,29 @@ public abstract class GeneralSearch {
 					if (!(possibleActions.get(i).contains("kill"))) {
 						String[] pa = possibleActions.get(i).split(",");
 						Location affected = new Location(Integer.parseInt(pa[1]), Integer.parseInt(pa[2]));
-						PreNode pn = new PreNode(pa[0], affected, frontTreeNode, 0, 0);
-						queue.enqueue(pn);
+						double actualCost = calculateActualCost(frontTreeNode, pa[0]);
+						PreNode pn = new PreNode(pa[0], affected, frontTreeNode, actualCost, 0, strategy);
+						if (strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID")) {
+							queue.enqueue(pn);
+						}else {
+							pqueue.enqueue(pn);
+						}
+						
 					} else {
 						// enqueue once and handle number of kills inside update
 						String[] pk = possibleActions.get(i).split(";");
 						String[] pa = pk[0].split(",");
-						PreNode pn = new PreNode(pa[0], frontTreeNode.myLoc, frontTreeNode, 0, 0);
-						queue.enqueue(pn);
+						double actualCost = calculateActualCost(frontTreeNode, possibleActions.get(i));
+						PreNode pn = new PreNode(pa[0], frontTreeNode.myLoc, frontTreeNode, actualCost, 0, strategy);
+						if (strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID")) {
+							queue.enqueue(pn);
+						}else {
+							pqueue.enqueue(pn);
+						}
 					}
 				}
-				if (queue.queue.isEmpty()) {
+				if (((strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID"))&&(queue.queue.isEmpty())) ||
+						((strategy.equals("UC") || strategy.contains("GR") || strategy.contains("AS"))&&(pqueue.queue.isEmpty()))) {
 					return "No Solution";
 				}
 				finalGrid = frontTreeNode.grid;
@@ -266,8 +299,8 @@ public abstract class GeneralSearch {
 
 				// TO-DO: cost
 				// create initial starting node
-				TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, carried);
-				PreNode startPre = new PreNode("Start", neo, start, 0, 0);
+				TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0,0, carried, 0);
+				PreNode startPre = new PreNode("Start", neo, start, 0, 0, strategy);
 				// add to the array of previous nodes to check for repeated states
 				prevNodes.add(start);
 
@@ -308,7 +341,7 @@ public abstract class GeneralSearch {
 					if (!(possibleActions.get(j).contains("kill"))) {
 						String[] pa = possibleActions.get(j).split(",");
 						Location affected = new Location(Integer.parseInt(pa[1]), Integer.parseInt(pa[2]));
-						PreNode pn = new PreNode(pa[0], affected, start, 0, 0);
+						PreNode pn = new PreNode(pa[0], affected, start, 0, 0, strategy);
 						if (pn.depth > k) {
 							// System.out.println(pn.depth);
 							stop = true;
@@ -319,7 +352,7 @@ public abstract class GeneralSearch {
 						// enqueue once and handle number of kills inside update
 						String[] pk = possibleActions.get(j).split(";");
 						String[] pa = pk[0].split(",");
-						PreNode pn = new PreNode(pa[0], neo, start, 0, 0);
+						PreNode pn = new PreNode(pa[0], neo, start, 0, 0, strategy);
 						if (pn.depth > k) {
 							// System.out.println(pn.depth);
 							stop = true;
@@ -444,7 +477,7 @@ public abstract class GeneralSearch {
 						if (!(possibleActions.get(j).contains("kill"))) {
 							String[] pa = possibleActions.get(j).split(",");
 							Location affected = new Location(Integer.parseInt(pa[1]), Integer.parseInt(pa[2]));
-							PreNode pn = new PreNode(pa[0], affected, frontTreeNode, 0, 0);
+							PreNode pn = new PreNode(pa[0], affected, frontTreeNode, 0, 0, strategy);
 							if (pn.depth > k) {
 								stop = true;
 								break;
@@ -454,7 +487,7 @@ public abstract class GeneralSearch {
 							// enqueue once and handle number of kills inside update
 							String[] pk = possibleActions.get(j).split(";");
 							String[] pa = pk[0].split(",");
-							PreNode pn = new PreNode(pa[0], frontTreeNode.myLoc, frontTreeNode, 0, 0);
+							PreNode pn = new PreNode(pa[0], frontTreeNode.myLoc, frontTreeNode, 0, 0, strategy);
 							if (pn.depth > k) {
 								stop = true;
 								break;
@@ -984,6 +1017,7 @@ public abstract class GeneralSearch {
 		int kills = prevNode.kills;
 		int neoD = prevNode.neoDamage;
 		Location newLocation = prevNode.myLoc;
+		int dropped = prevNode.droppedHos;
 		// get the affected location from action
 		String[] actionDetails = action.split(",");
 		Location moveTo = new Location(Integer.parseInt(actionDetails[1]), Integer.parseInt(actionDetails[2]));
@@ -1136,6 +1170,8 @@ public abstract class GeneralSearch {
 			}
 			break;
 		case ("drop"):
+			// increment the dropped with the carried size
+			dropped += carried.size();
 			// Reset carried
 			if (carried.size() > 0) {
 				carried = new ArrayList<Integer>();
@@ -1258,7 +1294,7 @@ public abstract class GeneralSearch {
 		}
 		// creating the resultant node
 		TreeNode resNode = new TreeNode(prevNode, prevNodes, newLocation, neoD, result, kills, deaths, actionDetails[0],
-				prevNode.depth + 1, 0, carried);
+				prevNode.depth + 1, 0,0, carried, dropped);
 		return resNode;
 	}
 
@@ -1506,5 +1542,90 @@ public abstract class GeneralSearch {
 		}
 		return result;
 
+	}
+
+	// TODO check if correct
+	public static double calculateActualCost(TreeNode node, String action) {
+		double cost = 0;
+		int deathWeight = 5;
+		int rescuedWeight = 2;
+		int killAgentWeight = 8;
+		int killMutantWeight = 5;
+		int damageWeight = 0;
+		int deaths = 0;
+		ArrayList<Integer> carried = node.carried;
+		int dropped = 0;
+		int killNumMutant = 0;
+		int killNumAg = 0;
+		// get the damages of the current hostages whether in grid or carried
+		ArrayList<String> gridHostages = getHostages(node.grid);
+		// if the action is not taking a pill then the damages will increase by 2
+		if (!(action.contains("takePill"))) {
+			for (int i = 0; i < gridHostages.size(); i++) {
+				String[] splittedHos = gridHostages.get(i).split(",");
+				// the third element is the damage
+				int oldDamage = Integer.parseInt(splittedHos[2]) + 2;
+				// check if it reached 100
+				if (oldDamage >= 100) {
+					deaths++;
+				}
+			}
+			// check that the action is not drop
+			if (!(action.contains("drop"))) {
+				for (int i = 0; i < carried.size(); i++) {
+					int d = carried.get(i);
+					if (d < 100) {
+						d += 2;
+						if (d >= 100) {
+							deaths++;
+						}
+					}
+				}
+			}
+		}
+		if (action.contains("drop")) {
+			dropped += node.carried.size();
+		} else if (action.contains("kill")) {
+			ArrayList<String> kills = getPossibleKills(node);
+			if (!(kills.isEmpty())) {
+				for (int i = 0; i < kills.size(); i++) {
+					if (kills.get(i) == "KillUp") {
+						String cellComp = whatInCell((node.myLoc.x - 1), node.myLoc.y, node.grid);
+						if (cellComp.contains("hostage")) {
+							killNumMutant++;
+						} else {
+							killNumAg++;
+						}
+
+					} else if (kills.get(i) == "KillRight") {
+						String cellComp = whatInCell(node.myLoc.x, (node.myLoc.y + 1), node.grid);
+						if (cellComp.contains("hostage")) {
+							killNumMutant++;
+						} else {
+							killNumAg++;
+						}
+					} else if (kills.get(i) == "KillDown") {
+						String cellComp = whatInCell((node.myLoc.x + 1), node.myLoc.y, node.grid);
+						if (cellComp.contains("hostage")) {
+							killNumMutant++;
+						} else {
+							killNumAg++;
+						}
+					} else if (kills.get(i) == "KillLeft") {
+						String cellComp = whatInCell(node.myLoc.x, (node.myLoc.y - 1), node.grid);
+						if (cellComp.contains("hostage")) {
+							killNumMutant++;
+						} else {
+							killNumAg++;
+						}
+					}
+				}
+			}
+		}
+		
+		cost = (deaths * deathWeight) + (dropped * rescuedWeight) + (killNumAg * killAgentWeight) + 
+				(killNumMutant * killMutantWeight) + (2 * (gridHostages.size() + carried.size()));
+
+		return cost;
 	}
 }
