@@ -778,18 +778,6 @@ public abstract class GeneralSearch {
 		boolean right = false;
 		boolean down = false;
 		boolean left = false;
-		boolean kill = true;
-		// check if I am in a cell with a hostage of damage 98 or 99 and if yes then do
-		// not perform kill action
-		String currentCellComponent = whatInCell(current.x, current.y, grid);
-		if (currentCellComponent.contains("hostage")) {
-			String[] h = currentCellComponent.split(";");
-			if (Integer.parseInt(h[3]) < 98) {
-				kill = true;
-			} else {
-				kill = false;
-			}
-		}
 		// check if I can go left
 		if (current.y > 0) {
 			// check if there is an agent or a mutant agent or if there is a hostage check
@@ -1565,11 +1553,11 @@ public abstract class GeneralSearch {
 			// array that contains locations of all the hostages
 			String[] pills;
 			ArrayList<String> pillsToBeUsed = new ArrayList<String>();
-			if (splitted.length <= 7) {
-				pills = new String[0];
-			} else {
-				pills = splitted[5].split(",");
-			}
+			//if (splitted.length <= 7) {
+			//	pills = new String[0];
+			//} else {
+			pills = splitted[5].split(",");
+			//}
 
 			for (int i = 0; i < pills.length - 1; i += 2) {
 				// store the location in a string
@@ -1640,12 +1628,12 @@ public abstract class GeneralSearch {
 	public static double calculatehCost2(TreeNode node, String action) {
 		double cost = 0;
 		int deathWeight = 5;
-		int killAgentWeight = 8;
-		int killMutantWeight = 5;
+		//int killAgentWeight = 8;
+		//int killMutantWeight = 5;
 		int deaths = 0;
 		ArrayList<Integer> carried = node.carried;
-		int killNumMutant = 0;
-		int killNumAg = 0;
+		//int killNumMutant = 0;
+		//int killNumAg = 0;
 		// get the damages of the current hostages whether in grid or carried
 		ArrayList<String> gridHostages = getHostages(node.grid);
 		// if the action is not taking a pill then the damages will increase by 2
@@ -1672,6 +1660,7 @@ public abstract class GeneralSearch {
 				}
 			}
 		}
+		/*
 		if (action.contains("kill")) {
 			ArrayList<String> kills = getPossibleKills(node);
 			if (!(kills.isEmpty())) {
@@ -1709,9 +1698,10 @@ public abstract class GeneralSearch {
 				}
 			}
 		}
-
-		cost = (deaths * deathWeight) + (killNumAg * killAgentWeight) + (killNumMutant * killMutantWeight)
-				+ (2 * (gridHostages.size() + carried.size()));
+	*/
+		cost = (deaths * deathWeight) + (2 * (gridHostages.size() + carried.size()));
+		//cost = (deaths * deathWeight) + (killNumAg * killAgentWeight) + (killNumMutant * killMutantWeight)
+		//		+ (2 * (gridHostages.size() + carried.size()));
 
 		return cost;
 	}
@@ -1720,19 +1710,22 @@ public abstract class GeneralSearch {
 	public static double calculateActualCost(TreeNode node, String action) {
 		double cost = 0;
 		int deathWeight = 5;
-		int rescuedWeight = 2;
+		int rescuedWeightAlive = 2;
+		int rescuedWeightDead = 4;
 		int killAgentWeight = 8;
 		int killMutantWeight = 5;
 		int damageWeight = 0;
 		int deaths = 0;
 		ArrayList<Integer> carried = node.carried;
-		int dropped = 0;
+		int droppedAlive = 0;
+		int droppedDead = 0;
 		int killNumMutant = 0;
 		int killNumAg = 0;
+		int pillWeight = 3;
 		// get the damages of the current hostages whether in grid or carried
 		ArrayList<String> gridHostages = getHostages(node.grid);
 		// if the action is not taking a pill then the damages will increase by 2
-		if (!(action.contains("takePill"))) {
+		//if (!(action.contains("takePill"))) {
 			for (int i = 0; i < gridHostages.size(); i++) {
 				String[] splittedHos = gridHostages.get(i).split(",");
 				// the third element is the damage
@@ -1754,9 +1747,20 @@ public abstract class GeneralSearch {
 					}
 				}
 			}
+		//}else {
+		//	pillWeight = 2;
+		//}
+		if ((action.contains("takePill"))) {
+			pillWeight = 2;
 		}
 		if (action.contains("drop")) {
-			dropped += node.carried.size();
+			for (int i = 0; i < carried.size(); i++) {
+				if (carried.get(i) >= 100) {
+					droppedDead++;
+				}else {
+					droppedAlive++;
+				}
+			}
 		} else if (action.contains("kill")) {
 			ArrayList<String> kills = getPossibleKills(node);
 			if (!(kills.isEmpty())) {
@@ -1795,8 +1799,9 @@ public abstract class GeneralSearch {
 			}
 		}
 
-		cost = (deaths * deathWeight) + (dropped * rescuedWeight) + (killNumAg * killAgentWeight)
+		cost = (deaths * deathWeight) + (killNumAg * killAgentWeight) 
 				+ (killNumMutant * killMutantWeight) + (2 * (gridHostages.size() + carried.size()));
+		//+ (droppedAlive * rescuedWeightAlive) + (droppedDead * rescuedWeightDead)+ pillWeight
 
 		return cost;
 	}
