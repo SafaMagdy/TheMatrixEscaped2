@@ -1,8 +1,9 @@
-java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1
-	at code.GeneralSearch.calculateH(GeneralSearch.java:1330)
-	at code.GeneralSearch.generalSearch(GeneralSearch.java:35)
+java.lang.NullPointerException: Cannot read field "x" because "loc2" is null
+	at code.GeneralSearch.calculatePyDistance(GeneralSearch.java:1572)
+	at code.GeneralSearch.calculateH(GeneralSearch.java:1392)
+	at code.GeneralSearch.generalSearch(GeneralSearch.java:296)
 	at code.Matrix.solve(Matrix.java:302)
-	at tests.TestMatrixPublic.teste0(TestMatrixPublic.java:375)
+	at tests.TestMatrixPublic.teste0(TestMatrixPublic.java:410)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
