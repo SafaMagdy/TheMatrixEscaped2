@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="TestMatrixPublic" project="16" tests="11" started="11" failures="0" errors="0" ignored="0">
+  <testsuite name="tests.TestMatrixPublic" time="0.863" displayname="TestMatrixPublic" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]">
+    <testcase name="testc0" classname="tests.TestMatrixPublic" time="0.017" displayname="testc0" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testc0(tests.TestMatrixPublic)]"/>
+    <testcase name="teste0" classname="tests.TestMatrixPublic" time="0.021" displayname="teste0" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste0(tests.TestMatrixPublic)]"/>
+    <testcase name="teste1" classname="tests.TestMatrixPublic" time="0.005" displayname="teste1" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste1(tests.TestMatrixPublic)]"/>
+    <testcase name="teste2" classname="tests.TestMatrixPublic" time="0.018" displayname="teste2" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste2(tests.TestMatrixPublic)]"/>
+    <testcase name="teste3" classname="tests.TestMatrixPublic" time="0.413" displayname="teste3" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste3(tests.TestMatrixPublic)]"/>
+    <testcase name="teste4" classname="tests.TestMatrixPublic" time="0.112" displayname="teste4" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste4(tests.TestMatrixPublic)]"/>
+    <testcase name="teste5" classname="tests.TestMatrixPublic" time="0.082" displayname="teste5" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste5(tests.TestMatrixPublic)]"/>
+    <testcase name="teste6" classname="tests.TestMatrixPublic" time="0.004" displayname="teste6" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste6(tests.TestMatrixPublic)]"/>
+    <testcase name="teste7" classname="tests.TestMatrixPublic" time="0.021" displayname="teste7" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste7(tests.TestMatrixPublic)]"/>
+    <testcase name="teste8" classname="tests.TestMatrixPublic" time="0.125" displayname="teste8" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste8(tests.TestMatrixPublic)]"/>
+    <testcase name="teste9" classname="tests.TestMatrixPublic" time="0.042" displayname="teste9" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:teste9(tests.TestMatrixPublic)]"/>
+  </testsuite>
+</testrun>
