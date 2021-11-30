@@ -35,6 +35,7 @@ public abstract class GeneralSearch {
 			double startHCost;
 			if (strategy.equals("GR1") || strategy.equals("AS1")) {
 				startHCost = calculateH(start, "Start");
+				System.out.println(startHCost);
 			} else {
 				startHCost = calculatehCost2(start, "Start");
 			}
@@ -194,8 +195,8 @@ public abstract class GeneralSearch {
 					ArrayList<String> goalPath = new ArrayList<String>();
 					TreeNode p = frontTreeNode;
 					while (p != null) {
-						//System.out.println(p.operator + " ," + p.deaths + " , " + p.carried.size() + "c, " + p.grid
-						//		+ "    " + p.actualCost);
+						System.out.println(p.operator + "   ," + p.actualCost + "a  , " + p.hCost + "h,   " + p.grid);
+						// + " " + p.actualCost);
 						goalPath.add(p.operator);
 						pathCost += p.actualCost;
 						p = p.parent;
@@ -1341,8 +1342,8 @@ public abstract class GeneralSearch {
 				prevNode.depth + 1, 0, 0, carried, dropped);
 		return resNode;
 	}
-	
-	public static double calculateH(TreeNode node, String possibleAction) {
+
+	public static double calculateHv3(TreeNode node, String possibleAction) {
 		// there is an alive hostage, he won't die until neo reaches him
 		// return distance from neo to nearest hostage to telephone
 		double cost = 0;
@@ -1382,7 +1383,7 @@ public abstract class GeneralSearch {
 				// get distance to booth
 				Location tele = getClosestLoc(closHos, "telephone", node);
 				distanceToBooth = calculatePyDistance(tele, closHos);
-				cost = (2 * (distanceToBooth + distanceToClosestHostage)) + node.depth + 1 ;
+				cost = (2 * (distanceToBooth + distanceToClosestHostage)) + node.depth + 1;
 				return cost;
 			}
 			// there are no alive hostages or they will die before neo reaches them
@@ -1407,7 +1408,7 @@ public abstract class GeneralSearch {
 
 	}
 
-	public static double calculateHv3(TreeNode node, String possibleAction) {
+	public static double calculateHv2(TreeNode node, String possibleAction) {
 		// there is an alive hostage with max damage, he won't die until neo reaches him
 		// return distance from neo to nearest hostage to telephone
 		double cost = 0;
@@ -1416,11 +1417,19 @@ public abstract class GeneralSearch {
 		Location affected = null;
 		Location currentNeo = node.myLoc;
 		int killMutantWeight = 15;
-		int mutantWeight = 4;
-		int hostageWeight = 3;
-		int drop = 2;
+		// int mutantWeight = 4;
+		// int hostageWeight = 3;
+		// int drop = 2;
+		String[] padsS = splitted[6].split(",");
+		ArrayList<Location> padsLoc = new ArrayList<Location>();
+		for (int i = 0; i < padsS.length - 1; i += 4) {
+			Location startPadLoc = new Location(Integer.parseInt(padsS[i]), Integer.parseInt(padsS[i + 1]));
+			Location finishPadLoc = new Location(Integer.parseInt(padsS[i + 2]), Integer.parseInt(padsS[i + 3]));
+			padsLoc.add(startPadLoc);
+			padsLoc.add(finishPadLoc);
+		}
 		// get distance to hostage
-		double distanceToClosestHostage = Integer.MAX_VALUE;
+		// double distanceToClosestHostage = Integer.MAX_VALUE;
 		double maxDamage = 0;
 		double distanceToBooth = Integer.MAX_VALUE;
 		boolean foundHostage = false;
@@ -1435,32 +1444,55 @@ public abstract class GeneralSearch {
 			int hostageDamage = Integer.parseInt(hostageDetails[2]);
 			closHos = new Location(Integer.parseInt(hostageDetails[0]), Integer.parseInt(hostageDetails[1]));
 			double distance = calculatePyDistance(closHos, currentNeo);
-			double hostageDamageAfter = hostageDamage + (2 * distanceToClosestHostage);
-			//if (distance < distanceToClosestHostage) {
-			if (hostageDamageAfter < 100 && hostageDamageAfter > maxDamage) {
+			if (hostageDamage < 100 && hostageDamage > maxDamage) {
 				// make sure he won't be dead by the time neo reaches him
-				//double hostageDamageAfter = hostageDamage + (2 * distanceToClosestHostage);
-				//Location tele = getClosestLoc(closHos, "telephone", node);
-				//distanceToBooth = calculatePyDistance(tele, closHos);
-				//distanceToClosestHostage = distance;
-				maxDamage = hostageDamageAfter;
+				maxDamage = hostageDamage;
 				foundHostage = true;
 				maxIndexDamage = i;
 				maxHos = closHos;
 				distanceToMax = distance;
-				
-			}else if (hostageDamageAfter >= 100) {
+
+				// check if pads will be shorter
+				for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+					Location startPadLoc = padsLoc.get(j);
+					Location finishPadLoc = padsLoc.get(j + 1);
+					double distanceToStart = calculatePyDistance(startPadLoc, currentNeo);
+					double distanceFromFinishToHostage = calculatePyDistance(finishPadLoc, maxHos);
+					double padDistance = distanceToStart + distanceFromFinishToHostage;
+					if (distanceToMax > padDistance) {
+						distanceToMax = padDistance;
+					}
+				}
+			}
+			double hostageDamageAfter = hostageDamage + (2 * distanceToMax);
+			if (hostageDamageAfter >= 100) {
 				continue;
 			}
-			
+
 		}
 		if (foundHostage) {
 			// get distance to booth
-			Location tele = getClosestLoc(closHos, "telephone", node);
-			//distanceToBooth = calculatePyDistance(tele, closHos);
+			Location tele = getClosestLoc(maxHos, "telephone", node);
+			// distanceToBooth = calculatePyDistance(tele, closHos);
 			distanceToBooth = calculatePyDistance(tele, maxHos);
-			//cost = (2 * (distanceToBooth + distanceToClosestHostage));
-			cost = (2 * (distanceToBooth + distanceToMax));
+			// check if pads will be shorter
+			for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+				Location startPadLoc = padsLoc.get(j);
+				Location finishPadLoc = padsLoc.get(j + 1);
+				double distanceToStart = calculatePyDistance(startPadLoc, maxHos);
+				double distanceFromFinishToBooth = calculatePyDistance(finishPadLoc, tele);
+				double padDistance = distanceToStart + distanceFromFinishToBooth;
+				if (distanceToBooth > padDistance) {
+					distanceToBooth = padDistance;
+				}
+			}
+			// cost = (2 * (distanceToBooth + distanceToClosestHostage));
+			if (possibleAction.contains("kill")) {
+				cost = (2 * (distanceToBooth + distanceToMax)) * killMutantWeight + node.depth + 1;
+			} else {
+				cost = (2 * (distanceToBooth + distanceToMax)) + node.depth + 1;
+			}
+
 			return cost;
 		}
 		// there are no alive hostages or they will die before neo reaches them
@@ -1470,7 +1502,17 @@ public abstract class GeneralSearch {
 		double distanceToClosestMutant = 0;
 		if (closMut != null) {
 			distanceToClosestMutant = calculatePyDistance(closMut, currentNeo);
-			cost = (distanceToClosestMutant * killMutantWeight);
+			for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+				Location startPadLoc = padsLoc.get(j);
+				Location finishPadLoc = padsLoc.get(j + 1);
+				double distanceToStart = calculatePyDistance(startPadLoc, currentNeo);
+				double distanceFromFinishToMutant = calculatePyDistance(finishPadLoc, closMut);
+				double padDistance = distanceToStart + distanceFromFinishToMutant;
+				if (distanceToClosestMutant > padDistance) {
+					distanceToClosestMutant = padDistance;
+				}
+			}
+			cost = (distanceToClosestMutant * killMutantWeight) + node.depth + 1;
 			return cost;
 		}
 
@@ -1478,12 +1520,22 @@ public abstract class GeneralSearch {
 		// return distance from neo to telephone
 		Location tele = getClosestLoc(currentNeo, "telephone", node);
 		distanceToBooth = calculatePyDistance(tele, currentNeo);
-		cost = distanceToBooth;
+		for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+			Location startPadLoc = padsLoc.get(j);
+			Location finishPadLoc = padsLoc.get(j + 1);
+			double distanceToStart = calculatePyDistance(startPadLoc, currentNeo);
+			double distanceFromFinishToBooth = calculatePyDistance(finishPadLoc, tele);
+			double padDistance = distanceToStart + distanceFromFinishToBooth;
+			if (distanceToBooth > padDistance) {
+				distanceToBooth = padDistance;
+			}
+		}
+		cost = distanceToBooth + node.depth + 1;
 		return cost;
 
 	}
 
-	public static double calculateHv2(TreeNode node, String possibleAction) {
+	public static double calculateHv4(TreeNode node, String possibleAction) {
 		double cost = 0;
 		String[] actionDetails = new String[3];
 		Location affected = null;
@@ -1493,17 +1545,9 @@ public abstract class GeneralSearch {
 		}
 		String[] splitted = node.grid.split(";");
 		int capacity = Integer.parseInt(splitted[1]);
-		// TODO
-		int mutantWeight = 4;
-		int hostageWeight = 4;
-		int pillWeight = 4;
-		int padWeight = 4;
-		int boothWeight = 4;
 
-		int deathWeight = 5;
-		int rescuedWeight = 2;
-		int killAgentWeight = 8;
-		int killMutantWeight = 5;
+		int deathWeight = 20;
+		int killWeight = 100;
 
 		if (possibleAction.contains("carry")) {
 			double carryWeight = 0.2;
@@ -1513,147 +1557,258 @@ public abstract class GeneralSearch {
 		}
 		if (possibleAction.contains("up") || possibleAction.contains("down") || possibleAction.contains("right")
 				|| possibleAction.contains("left")) {
-			// get distance to mutant
-			Location closMut = getClosestLoc(affected, "mutant", node);
-			double distanceToClosestMutantAfterUpAction = 1;
-			if (closMut != null) {
-				distanceToClosestMutantAfterUpAction = calculatePyDistance(closMut, affected);
+
+			String[] padsS = splitted[6].split(",");
+			ArrayList<Location> padsLoc = new ArrayList<Location>();
+			for (int i = 0; i < padsS.length - 1; i += 4) {
+				Location startPadLoc = new Location(Integer.parseInt(padsS[i]), Integer.parseInt(padsS[i + 1]));
+				Location finishPadLoc = new Location(Integer.parseInt(padsS[i + 2]), Integer.parseInt(padsS[i + 3]));
+				padsLoc.add(startPadLoc);
+				padsLoc.add(finishPadLoc);
 			}
 			// get distance to hostage
-			double distanceToClosestHostageAfterUpAction = 1;
-			Location closHos = getClosestLoc(affected, "hostage", node);
-			if (closHos != null) {
-				distanceToClosestHostageAfterUpAction = calculatePyDistance(closHos, affected);
+			// double distanceToClosestHostage = Integer.MAX_VALUE;
+			double maxDamage = 0;
+			double distanceToBooth = Integer.MAX_VALUE;
+			boolean foundHostage = false;
+			ArrayList<String> hostages = getHostages(node.grid);
+			Location closHos = null;
+			Location maxHos = null;
+			int maxIndexDamage = 0;
+			double distanceToMax = Integer.MAX_VALUE;
+			for (int i = 0; i < hostages.size(); i++) {
+				String hostage = hostages.get(i);
+				String[] hostageDetails = hostage.split(",");
+				int hostageDamage = Integer.parseInt(hostageDetails[2]);
+				closHos = new Location(Integer.parseInt(hostageDetails[0]), Integer.parseInt(hostageDetails[1]));
+				double distance = calculatePyDistance(closHos, affected);
+				if (hostageDamage < 100 && hostageDamage > maxDamage) {
+					// make sure he won't be dead by the time neo reaches him
+					maxDamage = hostageDamage;
+					foundHostage = true;
+					maxIndexDamage = i;
+					maxHos = closHos;
+					distanceToMax = distance;
+
+					// check if pads will be shorter
+					for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+						Location startPadLoc = padsLoc.get(j);
+						Location finishPadLoc = padsLoc.get(j + 1);
+						double distanceToStart = calculatePyDistance(startPadLoc, affected);
+						double distanceFromFinishToHostage = calculatePyDistance(finishPadLoc, maxHos);
+						double padDistance = distanceToStart + distanceFromFinishToHostage;
+						if (distanceToMax > padDistance) {
+							distanceToMax = padDistance;
+						}
+					}
+				}
+				double hostageDamageAfter = hostageDamage + (2 * distanceToMax);
+				if (hostageDamageAfter >= 100) {
+					continue;
+				}
+
 			}
+			if (foundHostage) {
+				// get distance to booth
+				Location tele = getClosestLoc(maxHos, "telephone", node);
+				// distanceToBooth = calculatePyDistance(tele, closHos);
+				distanceToBooth = calculatePyDistance(tele, maxHos);
+				// check if pads will be shorter
+				for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+					Location startPadLoc = padsLoc.get(j);
+					Location finishPadLoc = padsLoc.get(j + 1);
+					double distanceToStart = calculatePyDistance(startPadLoc, maxHos);
+					double distanceFromFinishToBooth = calculatePyDistance(finishPadLoc, tele);
+					double padDistance = distanceToStart + distanceFromFinishToBooth;
+					if (distanceToBooth > padDistance) {
+						distanceToBooth = padDistance;
+					}
+				}
+
+				cost = (2 * (distanceToBooth + distanceToMax)) + node.depth + 1;
+				return cost;
+			}
+			// get distance to mutant
+			Location closMut = getClosestLoc(affected, "mutant", node);
+			double distanceToClosestMutant = 0;
+			if (closMut != null) {
+				distanceToClosestMutant = calculatePyDistance(closMut, affected);
+				for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+					Location startPadLoc = padsLoc.get(j);
+					Location finishPadLoc = padsLoc.get(j + 1);
+					double distanceToStart = calculatePyDistance(startPadLoc, affected);
+					double distanceFromFinishToMutant = calculatePyDistance(finishPadLoc, closMut);
+					double padDistance = distanceToStart + distanceFromFinishToMutant;
+					if (distanceToClosestMutant > padDistance) {
+						distanceToClosestMutant = padDistance;
+					}
+				}
+				cost = (distanceToClosestMutant * killWeight) + node.depth + 1;
+				return cost;
+			}
+
 			// get distance to pill
 			double distanceToClosestPillAfterUpAction = 1;
 			Location closPill = getClosestLoc(affected, "pill", node);
 			if (closPill != null) {
 				distanceToClosestPillAfterUpAction = calculatePyDistance(closPill, affected);
-			} else {
-				distanceToClosestPillAfterUpAction = 1;
+				return 100 - node.neoDamage;
 			}
 
-			// get distance to pad
-			Location closPad = getClosestLoc(affected, "pad", node);
-			double distanceToClosestPadAfterUpAction = calculatePyDistance(closPad, affected);
-			// get distance to booth
+			// no hostages or mutants
+			// return distance from neo to telephone
 			Location tele = getClosestLoc(affected, "telephone", node);
-			double distanceToBoothAfterUpAction = calculatePyDistance(tele, affected);
-			String[] finishPadS = (whatInCell(closPad.x, closPad.y, node.grid)).split(";");
-			Location finishPad = new Location(Integer.parseInt(finishPadS[3]), Integer.parseInt(finishPadS[4]));
-
-			// get distance to mutant
-			Location padMut = getClosestLoc(finishPad, "mutant", node);
-			double distanceFromPadToMutant = 1;
-			if (padMut != null) {
-				distanceFromPadToMutant = calculatePyDistance(finishPad, padMut);
+			distanceToBooth = calculatePyDistance(tele, affected);
+			for (int j = 0; j < padsLoc.size() - 1; j += 2) {
+				Location startPadLoc = padsLoc.get(j);
+				Location finishPadLoc = padsLoc.get(j + 1);
+				double distanceToStart = calculatePyDistance(startPadLoc, affected);
+				double distanceFromFinishToBooth = calculatePyDistance(finishPadLoc, tele);
+				double padDistance = distanceToStart + distanceFromFinishToBooth;
+				if (distanceToBooth > padDistance) {
+					distanceToBooth = padDistance;
+				}
 			}
-			// get distance to hostage
-			double distanceFromPadToHostage = 1;
-			Location padHos = getClosestLoc(finishPad, "hostage", node);
-			if (padHos != null) {
-				distanceFromPadToHostage = calculatePyDistance(finishPad, padHos);
-			}
-
-			// TODO actual
-			/*
-			 * ArrayList<Integer> damageToHostages = new ArrayList<Integer>(); for (int j =
-			 * 0; j < damageToHostages.size(); j++) { int distanceToHostage = 10; int
-			 * damageToHostage = 10; cost += distanceToHostage * 2 * (100 -
-			 * damageToHostage); }
-			 */
-			// TODO
-			ArrayList<String> mu = getMutantHostages(node.grid);
-			if (mu.size() > 0) {
-				mutantWeight = 2;
-			} else {
-				mutantWeight = 10;
-			}
-			ArrayList<String> hostages = getHostages(node.grid);
-			if (hostages.size() > 0) {
-				hostageWeight = 2;
-			} else {
-				hostageWeight = 10;
-			}
-
-			cost += distanceToClosestMutantAfterUpAction * mutantWeight
-					+ distanceToClosestHostageAfterUpAction * 2 * (1 - (node.carried.size() / capacity)) * hostageWeight
-					+ distanceToClosestPadAfterUpAction * (distanceFromPadToHostage * 2 + distanceFromPadToMutant)
-							* padWeight
-					+ distanceToBoothAfterUpAction * (node.carried.size() / capacity) * boothWeight;
-			// + (20 - distanceToClosestPillAfterUpAction) * pillWeight;
-
+			cost = distanceToBooth + node.depth + 1;
 			return cost;
+
 		}
 
 		if (possibleAction.contains("kill")) {
 
 			ArrayList<String> kills = getPossibleKills(node);
-			int killNumMutant = 0;
-			int killNumAg = 0;
-			if (!(kills.isEmpty())) {
-				for (int i = 0; i < kills.size(); i++) {
-					if (kills.get(i) == "KillUp") {
-						String cellComp = whatInCell((node.myLoc.x - 1), node.myLoc.y, node.grid);
-						if (cellComp.contains("hostage")) {
-							killNumMutant++;
-						} else {
-							killNumAg++;
-						}
+			int killNum = kills.size();
 
-					} else if (kills.get(i) == "KillRight") {
-						String cellComp = whatInCell(node.myLoc.x, (node.myLoc.y + 1), node.grid);
-						if (cellComp.contains("hostage")) {
-							killNumMutant++;
-						} else {
-							killNumAg++;
-						}
-					} else if (kills.get(i) == "KillDown") {
-						String cellComp = whatInCell((node.myLoc.x + 1), node.myLoc.y, node.grid);
-						if (cellComp.contains("hostage")) {
-							killNumMutant++;
-						} else {
-							killNumAg++;
-						}
-					} else if (kills.get(i) == "KillLeft") {
-						String cellComp = whatInCell(node.myLoc.x, (node.myLoc.y - 1), node.grid);
-						if (cellComp.contains("hostage")) {
-							killNumMutant++;
-						} else {
-							killNumAg++;
-						}
-					}
+			cost = killNum * killWeight;
+			return cost;
+
+		}
+		if (possibleAction.contains("fly")) {
+
+			double maxDamage = 0;
+			double distanceToBooth = Integer.MAX_VALUE;
+			boolean foundHostage = false;
+			ArrayList<String> hostages = getHostages(node.grid);
+			Location closHos = null;
+			Location maxHos = null;
+			int maxIndexDamage = 0;
+			double distanceToMax = Integer.MAX_VALUE;
+			for (int i = 0; i < hostages.size(); i++) {
+				String hostage = hostages.get(i);
+				String[] hostageDetails = hostage.split(",");
+				int hostageDamage = Integer.parseInt(hostageDetails[2]);
+				closHos = new Location(Integer.parseInt(hostageDetails[0]), Integer.parseInt(hostageDetails[1]));
+				double distance = calculatePyDistance(closHos, affected);
+				if (hostageDamage < 100 && hostageDamage > maxDamage) {
+					// make sure he won't be dead by the time neo reaches him
+					maxDamage = hostageDamage;
+					foundHostage = true;
+					maxIndexDamage = i;
+					maxHos = closHos;
+					distanceToMax = distance;
+				}
+				double hostageDamageAfter = hostageDamage + (2 * distanceToMax);
+				if (hostageDamageAfter >= 100) {
+					continue;
 				}
 
-				cost = (killNumMutant * killMutantWeight) + (killNumAg * killAgentWeight);
+			}
+			if (foundHostage) {
+				// get distance to booth
+				Location tele = getClosestLoc(maxHos, "telephone", node);
+				// distanceToBooth = calculatePyDistance(tele, closHos);
+				distanceToBooth = calculatePyDistance(tele, maxHos);
+				cost = (2 * (distanceToBooth + distanceToMax)) + node.depth + 1;
 				return cost;
 
 			}
-			if (possibleAction.contains("fly")) {
-
-				Location finishPad = new Location(Integer.parseInt(actionDetails[1]),
-						Integer.parseInt(actionDetails[2]));
-				Location padHos = getClosestLoc(finishPad, "hostage", node);
-				double distanceFromPadToHostage = calculatePyDistance(finishPad, padHos);
-				Location padMut = getClosestLoc(finishPad, "mutant", node);
-				double distanceFromPadToMutant = calculatePyDistance(finishPad, padMut);
-				cost = (distanceFromPadToHostage * hostageWeight) + (distanceFromPadToMutant * mutantWeight);
-
-			}
-			if (possibleAction.contains("Pill")) {
-				double neoDamageWeight = 100 - node.neoDamage;
-				ArrayList<String> hostages = new ArrayList<String>();
-				// get all the damages and calculate the average
-				// hosDamage = 100 -average
-				// pill weight * neoDamageWeight * hosDamage
-				// cost = pillWeight;
-				cost = neoDamageWeight;
+			// get distance to mutant
+			Location closMut = getClosestLoc(affected, "mutant", node);
+			double distanceToClosestMutant = 0;
+			if (closMut != null) {
+				distanceToClosestMutant = calculatePyDistance(closMut, affected);
+				cost = (distanceToClosestMutant * killWeight) + node.depth + 1;
 				return cost;
+			}
+		}
+		if (possibleAction.contains("Pill")) {
+			double neoDamageWeight = 100 - node.neoDamage;
+			cost = neoDamageWeight;
+			return cost;
+		}
+		return cost;
+	}
+
+	public static double calculateH(TreeNode node, String possibleAction) {
+		// there is an alive hostage, he won't die until neo reaches him
+		// return distance from neo to nearest hostage to telephone
+		double cost = 0;
+		String[] splitted = node.grid.split(";");
+		String[] actionDetails = new String[3];
+		Location affected = null;
+		Location currentNeo = node.myLoc;
+		int killMutantWeight = 10;
+		// get distance to hostage
+		// double distanceToClosestHostage = Integer.MAX_VALUE;
+		double distanceToBooth = Integer.MAX_VALUE;
+		boolean foundHostage = false;
+		ArrayList<String> hostages = getHostages(node.grid);
+		Location closHos = null;
+		Location minHos = null;
+		double maxDamage = 0;
+		Location maxHos = null;
+		double distanceToMax = Integer.MAX_VALUE;
+		for (int i = 0; i < hostages.size(); i++) {
+			String hostage = hostages.get(i);
+			String[] hostageDetails = hostage.split(",");
+			int hostageDamage = Integer.parseInt(hostageDetails[2]);
+			closHos = new Location(Integer.parseInt(hostageDetails[0]), Integer.parseInt(hostageDetails[1]));
+			double distance = calculatePyDistance(closHos, currentNeo);
+			if (hostageDamage < 100 && hostageDamage > maxDamage) {
+				// make sure he won't be dead by the time neo reaches him
+				maxDamage = hostageDamage;
+				foundHostage = true;
+				maxHos = closHos;
+				distanceToMax = distance;
+			}
+			double hostageDamageAfter = hostageDamage + (2 * distanceToMax);
+			if (hostageDamageAfter >= 100) {
+				continue;
 			}
 
 		}
-		return cost;
+		if (foundHostage) {
+			// get distance to booth
+			Location tele = getClosestLoc(maxHos, "telephone", node);
+			// distanceToBooth = calculatePyDistance(tele, closHos);
+			distanceToBooth = calculatePyDistance(tele, maxHos);
+			cost += (2 * (distanceToBooth + distanceToMax));
+			// return cost;
+
+		}
+		// there are no alive hostages or they will die before neo reaches them
+		// return distance from neo to nearest mutant + kill cost
+		// get distance to mutant
+		Location closMut = getClosestLoc(currentNeo, "mutant", node);
+		double distanceToClosestMutant = 0;
+		if (closMut != null) {
+			distanceToClosestMutant = calculatePyDistance(closMut, currentNeo);
+			cost += (distanceToClosestMutant * killMutantWeight * node.neoDamage);
+			// return cost;
+		}
+
+		// no hostages or mutants
+		// return distance from neo to telephone
+		Location tele = getClosestLoc(currentNeo, "telephone", node);
+		distanceToBooth = calculatePyDistance(tele, currentNeo);
+		cost += distanceToBooth;
+		if (possibleAction.contains("kill")) {
+			int kills = getPossibleKills(node).size();
+			cost += kills * killMutantWeight;
+		}
+		// return cost;
+	return cost;
+
 	}
 
 	public static double calculatePyDistance(Location loc1, Location loc2) {
@@ -1844,72 +1999,52 @@ public abstract class GeneralSearch {
 	}
 
 	// TODO check if correct
-		public static double calculateActualCost(TreeNode node, String action) {
-			double cost = 0;
-			int deathWeight = 20;
-			int rescuedWeightAlive = 2;
-			int rescuedWeightDead = 4;
-			//int killAgentWeight = 8;
-			//int killMutantWeight = 5;
-			int killWeight = 10;
-			int damageWeight = 0;
-			int deaths = 0;
-			ArrayList<Integer> carried = node.carried;
-			int droppedAlive = 0;
-			int droppedDead = 0;
-			//int killNumMutant = 0;
-			//int killNumAg = 0;
-			int killNum = 0;
-			int pillWeight = 3;
-			// get the damages of the current hostages whether in grid or carried
-			ArrayList<String> gridHostages = getHostages(node.grid);
-			// if the action is not taking a pill then the damages will increase by 2
-			// if (!(action.contains("takePill"))) {
-			for (int i = 0; i < gridHostages.size(); i++) {
-				String[] splittedHos = gridHostages.get(i).split(",");
-				// the third element is the damage
-				int oldDamage = Integer.parseInt(splittedHos[2]) + 2;
-				// check if it reached 100
-				if (oldDamage >= 100) {
-					deaths++;
-				}
+	public static double calculateActualCost(TreeNode node, String action) {
+		double cost = 0;
+		int deathWeight = 20;
+		int killWeight = 10;
+		// TODO check if needed to accumulate
+		int deaths = 0;
+		ArrayList<Integer> carried = node.carried;
+		int carriedNum = carried.size();
+		int killNum = 0;
+		// get the damages of the current hostages whether in grid or carried
+		ArrayList<String> gridHostages = getHostages(node.grid);
+		// if the action is not taking a pill then the damages will increase by 2
+		// if (!(action.contains("takePill"))) {
+		for (int i = 0; i < gridHostages.size(); i++) {
+			String[] splittedHos = gridHostages.get(i).split(",");
+			// the third element is the damage
+			int oldDamage = Integer.parseInt(splittedHos[2]) + 2;
+			// check if it reached 100
+			if (oldDamage >= 100) {
+				deaths++;
 			}
-			// check that the action is not drop
-			if (!(action.contains("drop"))) {
-				for (int i = 0; i < carried.size(); i++) {
-					int d = carried.get(i);
-					if (d < 100) {
-						d += 2;
-						if (d >= 100) {
-							deaths++;
-						}
-					}
-				}
-			}
-			// }else {
-			// pillWeight = 2;
-			// }
-			if ((action.contains("takePill"))) {
-				pillWeight = 2;
-			}
-			if (action.contains("drop")) {
-				for (int i = 0; i < carried.size(); i++) {
-					if (carried.get(i) >= 100) {
-						droppedDead++;
-					} else {
-						droppedAlive++;
-					}
-				}
-			} else if (action.contains("kill")) {
-				ArrayList<String> kills = getPossibleKills(node);
-				killNum += kills.size();
-					
-			}
-			cost = (deaths * deathWeight) + (killNum * killWeight)
-					+ (2 * (gridHostages.size() + carried.size()));
-			// + (droppedAlive * rescuedWeightAlive) + (droppedDead * rescuedWeightDead)+
-			// pillWeight
-
-			return cost;
 		}
+		// check that the action is not drop
+		if (!(action.contains("drop"))) {
+			for (int i = 0; i < carried.size(); i++) {
+				int d = carried.get(i);
+				if (d < 100) {
+					d += 2;
+					if (d >= 100) {
+						deaths++;
+						carriedNum--;
+					}
+				} else {
+					carriedNum--;
+				}
+			}
+		}
+		if (action.contains("kill")) {
+			ArrayList<String> kills = getPossibleKills(node);
+			killNum += kills.size();
+
+		}
+		cost = (deaths * deathWeight) + (killNum * killWeight) + (2 * (gridHostages.size() + carried.size()));
+		// + (droppedAlive * rescuedWeightAlive) + (droppedDead * rescuedWeightDead)+
+		// pillWeight
+
+		return cost;
+	}
 }

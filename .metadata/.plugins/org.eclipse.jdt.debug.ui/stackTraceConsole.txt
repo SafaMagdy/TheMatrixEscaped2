@@ -1,9 +1,9 @@
 java.lang.NullPointerException: Cannot read field "x" because "loc2" is null
-	at code.GeneralSearch.calculatePyDistance(GeneralSearch.java:1572)
-	at code.GeneralSearch.calculateH(GeneralSearch.java:1392)
-	at code.GeneralSearch.generalSearch(GeneralSearch.java:296)
+	at code.GeneralSearch.calculatePyDistance(GeneralSearch.java:1815)
+	at code.GeneralSearch.calculateH(GeneralSearch.java:1769)
+	at code.GeneralSearch.generalSearch(GeneralSearch.java:37)
 	at code.Matrix.solve(Matrix.java:302)
-	at tests.TestMatrixPublic.teste0(TestMatrixPublic.java:410)
+	at tests.TestMatrixPublic.testg9(TestMatrixPublic.java:710)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
