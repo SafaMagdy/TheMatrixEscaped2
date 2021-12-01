@@ -1659,7 +1659,6 @@ public abstract class GeneralSearch {
 		int killMutantWeight = 50;
 		int deaths = 0;
 		ArrayList<Integer> carried = node.carried;
-		ArrayList<String> hostages = getHostages(node.grid);
 		int killNumMutant = 0;
 		// int killNumAg = 0;
 		// get the damages of the current hostages whether in grid or carried
@@ -1690,7 +1689,7 @@ public abstract class GeneralSearch {
 		}
 
 
-		cost = (deaths * deathWeight) + (hostages.size() * 2) +node.depth + 1;
+		cost = (deaths * deathWeight) + node.neoDamage + node.depth + 1;
 		// cost = (deaths * deathWeight) + (killNumAg * killAgentWeight) +
 		// (killNumMutant * killMutantWeight)
 		// + (2 * (gridHostages.size() + carried.size()));

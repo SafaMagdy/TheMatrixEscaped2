@@ -814,7 +814,6 @@ public class TestMatrixPublic {
 		//path cost: 22616.0
 		//kill,down,down,down,left,down,kill,left,kill,left,left,takePill,right,right,up,right,up,up,
 		//kill,left,kill,left,left,down,carry,up,right,right,down,down,right,right,down,drop;5;8;8457
-		//msh sa7
 
 	}
 	*/
@@ -834,10 +833,7 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid5, solution));
-		//path cost: 379.0
-		//down,left,down,takePill,left,left,left,up,carry,down,down,down,carry,right,right,right,right,
-		//up,drop,down,left,left,carry,right,right,up,drop;0;0;329
-
+		//less number of nodes
 	}
 	*/
 	/*
@@ -847,8 +843,7 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid6, solution));
-		//path cost: 106.0
-		//up,carry,down,down,fly,up,up,up,carry,down,down,down,left,drop;0;0;365
+		//same nodes
 	}
 	*/
 	/*
@@ -858,10 +853,7 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid7, solution));
-		//path cost: 352.0
-		//down,down,carry,right,takePill,down,carry,up,left,up,left,left,left,down,takePill,up,up,fly,
-		//left,carry,right,fly,down,down,down,drop;0;0;1110
-
+		//same nodes
 	}
 	*/
 	/*
@@ -871,9 +863,7 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid8, solution));
-		//path cost: 211.0
-		//left,left,carry,left,carry,right,up,up,drop,up,right,carry,left,left,up,carry,down,right,
-		//down,drop;0;0;2412
+		//same number of nodes
 	}
 	*/
 	/*
@@ -883,11 +873,7 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid9, solution));
-		//path cost: 1226.0
-		//down,down,takePill,left,left,down,down,left,left,up,carry,up,up,takePill,down,down,down,right,
-		//right,right,right,carry,left,fly,right,down,drop,up,left,fly,left,left,left,up,up,up,up,carry,
-		//down,down,down,down,right,right,right,fly,right,down,drop;0;0;1851
-
+		//same number of nodes
 	}
 	*/
 	/*
@@ -897,8 +883,6 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
-		//path cost: 394.0
-		//left,up,carry,down,right,right,down,right,carry,down,carry,down,carry,kill,left,left,drop;0;1;4079
 	}
 
 	*/

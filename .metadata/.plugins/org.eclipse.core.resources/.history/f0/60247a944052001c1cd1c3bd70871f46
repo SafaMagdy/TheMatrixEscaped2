@@ -897,8 +897,6 @@ public class TestMatrixPublic {
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
-		//path cost: 394.0
-		//left,up,carry,down,right,right,down,right,carry,down,carry,down,carry,kill,left,left,drop;0;1;4079
 	}
 
 	*/
