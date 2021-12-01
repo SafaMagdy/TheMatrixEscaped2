@@ -9,6 +9,8 @@
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
 			<item value="whatInCell"/>
+			<item value="v5"/>
+			<item value="update"/>
 			<item value="cell"/>
 			<item value="possibleActions"/>
 		</list>

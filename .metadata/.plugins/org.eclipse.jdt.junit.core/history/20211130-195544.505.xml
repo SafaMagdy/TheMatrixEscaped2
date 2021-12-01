@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="TestMatrixPublic" project="16" tests="2" started="2" failures="0" errors="0" ignored="0">
-  <testsuite name="tests.TestMatrixPublic" time="0.499" displayname="TestMatrixPublic" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]">
-    <testcase name="testc3" classname="tests.TestMatrixPublic" time="0.484" displayname="testc3" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testc3(tests.TestMatrixPublic)]"/>
-    <testcase name="testg9" classname="tests.TestMatrixPublic" time="0.015" displayname="testg9" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testg9(tests.TestMatrixPublic)]"/>
-  </testsuite>
-</testrun>
