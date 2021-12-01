@@ -31,7 +31,7 @@ public abstract class GeneralSearch {
 
 			// TODO cost
 			// create initial starting node
-			TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, 0, carried, 0);
+			TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, 0, carried);
 			double startAcost = calculateActualCost(start, "Start");
 			double startHCost;
 			if (strategy.equals("GR1") || strategy.equals("AS1")) {
@@ -375,7 +375,7 @@ public abstract class GeneralSearch {
 
 				// TO-DO: cost
 				// create initial starting node
-				TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, 0, carried, 0);
+				TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, 0, carried);
 				PreNode startPre = new PreNode("Start", neo, start, 0, 0, strategy);
 				HashSet prevNodesHash = new HashSet();
 				String state = start.myLoc.x + ";" + start.myLoc.y + ";"
@@ -1122,7 +1122,6 @@ public abstract class GeneralSearch {
 		int kills = prevNode.kills;
 		int neoD = prevNode.neoDamage;
 		Location newLocation = prevNode.myLoc;
-		int dropped = prevNode.droppedHos;
 		// get the affected location from action
 		String[] actionDetails = action.split(",");
 		Location moveTo = new Location(Integer.parseInt(actionDetails[1]), Integer.parseInt(actionDetails[2]));
@@ -1275,8 +1274,6 @@ public abstract class GeneralSearch {
 			}
 			break;
 		case ("drop"):
-			// increment the dropped with the carried size
-			dropped += carried.size();
 			// Reset carried
 			if (carried.size() > 0) {
 				carried = new ArrayList<Integer>();
@@ -1399,7 +1396,7 @@ public abstract class GeneralSearch {
 		}
 		// creating the resultant node
 		TreeNode resNode = new TreeNode(prevNode, prevNodes, newLocation, neoD, result, kills, deaths, actionDetails[0],
-				prevNode.depth + 1, 0, 0, carried, dropped);
+				prevNode.depth + 1, 0, 0, carried);
 		return resNode;
 	}
 

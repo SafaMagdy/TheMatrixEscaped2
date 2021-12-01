@@ -492,7 +492,7 @@ public class TestMatrixPublic {
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid9, solution));
 		//passed
 	}
-	*/
+	 
 	
 	/*
 	@Test(timeout = 10000)
