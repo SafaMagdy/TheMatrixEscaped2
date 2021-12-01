@@ -20,7 +20,6 @@ public abstract class GeneralSearch {
 			String result = "";
 			// initialize everything as this is the start
 			ArrayList<TreeNode> prevNodes = new ArrayList<TreeNode>();
-			ArrayList<PreNode> preNodes = new ArrayList<PreNode>();
 			String[] splitted = grid.split(";");
 			// get Neo's starting position from the given grid
 			String[] preNeo = splitted[2].split(",");
@@ -29,7 +28,6 @@ public abstract class GeneralSearch {
 			// number
 			ArrayList<Integer> carried = new ArrayList<Integer>();
 
-			// TODO cost
 			// create initial starting node
 			TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, 0, carried);
 			double startAcost = calculateActualCost(start, "Start");
@@ -40,11 +38,10 @@ public abstract class GeneralSearch {
 			} else {
 				startHCost = calculatehCost2(start, "Start");
 			}
-			// double startHCost = (strategy.equals("GR1"))?(calculateH(start,
-			// "Start")):(calculatehCost2(start, "Start"));
 			start.actualCost = startAcost;
 			start.hCost = startHCost;
 			PreNode startPre = new PreNode("Start", neo, start, startAcost, startHCost, strategy);
+			//hashset to compare repeated states
 			HashSet prevNodesHash = new HashSet();
 			String state = start.myLoc.x + ";" + start.myLoc.y + ";"
 					+ getGridWithoutDamages(start.grid) + "," 
@@ -153,18 +150,7 @@ public abstract class GeneralSearch {
 					}
 				}
 			}
-			// if (visualize) {
-			// System.out.println("The possible action(s) available at this cell is/are (as
-			// ordered in the queue): ");
-			// queue.display();
-			// }
-
 			boolean failed = false;
-			String finalGrid = "";
-
-			// FileWriter fw = null;
-			// BufferedWriter bw = null;
-			// PrintWriter writer = null;
 			while (((strategy.equals("DF") || strategy.equals("BF") || strategy.equals("ID"))
 					&& (!queue.queue.isEmpty()))
 					|| ((strategy.equals("UC") || strategy.contains("GR") || strategy.contains("AS"))
@@ -182,13 +168,13 @@ public abstract class GeneralSearch {
 				if (visualize) {
 					System.out.println("The prenode: " + frontPreNode.action);
 				}
-				boolean repeated = false;
-				// System.out.println(frontPreNode.action);
+				boolean repeated = true;
 				TreeNode frontTreeNode = update(
 						frontPreNode.action + "," + frontPreNode.affectedCell.x + "," + frontPreNode.affectedCell.y,
 						frontPreNode.prevNode, prevNodes);
 				frontTreeNode.actualCost = frontPreNode.actualCost;
 				frontTreeNode.hCost = frontPreNode.hCost;
+				
 				// check if gameOver
 				if (gameOver(frontTreeNode.neoDamage)) {
 					System.out.println("Game Over at this path");
@@ -204,8 +190,10 @@ public abstract class GeneralSearch {
 					ArrayList<String> goalPath = new ArrayList<String>();
 					TreeNode p = frontTreeNode;
 					while (p != null) {
-						System.out.println(p.operator + "   ," + p.actualCost + "a  , " + p.hCost + "h,   " + p.grid);
-						// + " " + p.actualCost);
+						if (visualize) {
+							System.out.println(p.operator + "   ," + p.actualCost + "a  , "
+										+ p.hCost + "h,   " + p.grid);
+						}
 						goalPath.add(p.operator);
 						pathCost += p.actualCost;
 						p = p.parent;
@@ -216,6 +204,9 @@ public abstract class GeneralSearch {
 						} else {
 							result += goalPath.get(z) + ",";
 						}
+					}
+					if (visualize) {
+						System.out.println("path cost: " + pathCost);
 					}
 					System.out.println("path cost: " + pathCost);
 					return result += ";" + frontTreeNode.deaths + ";" + frontTreeNode.kills + ";" + prevNodes.size();
@@ -230,26 +221,6 @@ public abstract class GeneralSearch {
 						
 				repeated = prevNodesHash.add(state);
 
-				// TODO check if this is a valid check for repeated states
-				/*
-				for (int i = 0; i < prevNodes.size(); i++) {
-					
-					if (frontTreeNode.myLoc.x == prevNodes.get(i).myLoc.x
-							&& frontTreeNode.myLoc.y == prevNodes.get(i).myLoc.y
-							&& compareGrids(frontTreeNode.grid, prevNodes.get(i).grid) == true
-							&& !(frontPreNode.action.contains("drop"))
-							&& frontTreeNode.carried.size() == prevNodes.get(i).carried.size()
-							&& frontTreeNode.kills == prevNodes.get(i).kills
-							&& frontTreeNode.deaths == prevNodes.get(i).deaths
-							&& frontTreeNode.neoDamage == prevNodes.get(i).neoDamage
-					        //&& frontTreeNode.depth > prevNodes.get(i).depth
-					) {
-						// ignore this path
-						repeated = true;
-						break;
-					}
-				}
-				 */
 				if (repeated == false) {
 					if (visualize) {
 						System.out.println("Following this action will lead to a repeated state so I ignored it ");
@@ -267,23 +238,6 @@ public abstract class GeneralSearch {
 					System.out.println(" Number of Deaths: " + frontTreeNode.deaths);
 					System.out.println(" Neo is carrying: " + frontTreeNode.carried.size() + " hostages");
 					System.out.println(" The grid is now: " + frontTreeNode.grid);
-
-					/*
-					 * try { fw = new FileWriter("vis.txt", true); bw = new BufferedWriter(fw);
-					 * writer = new PrintWriter(bw);
-					 * 
-					 * writer.println("Neo was at cell: " + frontPreNode.prevNode.myLoc.x + "  " +
-					 * frontPreNode.prevNode.myLoc.y); writer.println(" After applying the action: "
-					 * + frontPreNode.action + " Neo is now at cell: " + frontTreeNode.myLoc.x +
-					 * "  " + frontTreeNode.myLoc.y); writer.println(" Neo's damage is now: " +
-					 * frontTreeNode.neoDamage); writer.println(" Number of Kills: " +
-					 * frontTreeNode.kills); writer.println(" Number of Deaths: " +
-					 * frontTreeNode.deaths); writer.println(" Neo is carrying: " +
-					 * frontTreeNode.carried.size() + " hostages");
-					 * writer.println(" The grid is now: " + frontTreeNode.grid); writer.flush();
-					 * writer.close(); bw.close(); fw.close(); // writer.close(); } catch (Exception
-					 * io) { }
-					 */
 				}
 
 				prevNodes.add(frontTreeNode);
@@ -353,7 +307,6 @@ public abstract class GeneralSearch {
 								&& (pqueue.queue.isEmpty()))) {
 					return "No Solution";
 				}
-				finalGrid = frontTreeNode.grid;
 			}
 			return "No Solution";
 		} else {
@@ -362,7 +315,7 @@ public abstract class GeneralSearch {
 			int k = 0;
 			while (true) {
 				// initialize everything as this is the start
-				System.out.println("Start again");
+				//System.out.println("Start again");
 				ArrayList<TreeNode> prevNodes = new ArrayList<TreeNode>();
 				ArrayList<PreNode> preNodes = new ArrayList<PreNode>();
 				String[] splitted = grid.split(";");
@@ -372,8 +325,6 @@ public abstract class GeneralSearch {
 				// array to store the damages of the carried hostages and keep track of their
 				// number
 				ArrayList<Integer> carried = new ArrayList<Integer>();
-
-				// TO-DO: cost
 				// create initial starting node
 				TreeNode start = new TreeNode(null, prevNodes, neo, 0, grid, 0, 0, "Start", 0, 0, 0, carried);
 				PreNode startPre = new PreNode("Start", neo, start, 0, 0, strategy);
@@ -428,7 +379,6 @@ public abstract class GeneralSearch {
 						Location affected = new Location(Integer.parseInt(pa[1]), Integer.parseInt(pa[2]));
 						PreNode pn = new PreNode(pa[0], affected, start, 0, 0, strategy);
 						if (pn.depth > k) {
-							// System.out.println(pn.depth);
 							stop = true;
 							break;
 						}
@@ -439,7 +389,6 @@ public abstract class GeneralSearch {
 						String[] pa = pk[0].split(",");
 						PreNode pn = new PreNode(pa[0], neo, start, 0, 0, strategy);
 						if (pn.depth > k) {
-							// System.out.println(pn.depth);
 							stop = true;
 							break;
 						}
@@ -457,7 +406,6 @@ public abstract class GeneralSearch {
 				}
 
 				boolean failed = false;
-				String finalGrid = "";
 				while (!queue.queue.isEmpty()) {
 					if (visualize) {
 						System.out.println("Removing a PreNode from the queue ");
@@ -468,7 +416,7 @@ public abstract class GeneralSearch {
 					if (visualize) {
 						System.out.println("The prenode: " + frontPreNode.action + frontPreNode.depth);
 					}
-					boolean repeated = false;
+					boolean repeated = true;
 					TreeNode frontTreeNode = update(
 							frontPreNode.action + "," + frontPreNode.affectedCell.x + "," + frontPreNode.affectedCell.y,
 							frontPreNode.prevNode, prevNodes);
@@ -510,23 +458,6 @@ public abstract class GeneralSearch {
 							+ frontTreeNode.neoDamage;
 							
 					repeated = prevNodesHash.add(state);
-					/*
-					// TO-DO: check if this is a valid check for repeated states
-					for (int j = 0; j < prevNodes.size(); j++) {
-						if (frontTreeNode.myLoc.x == prevNodes.get(j).myLoc.x
-								&& frontTreeNode.myLoc.y == prevNodes.get(j).myLoc.y
-								&& compareGrids(frontTreeNode.grid, prevNodes.get(j).grid) == true
-								&& !(frontPreNode.action.equals("drop"))
-								&& frontTreeNode.carried.size() == prevNodes.get(j).carried.size()
-								&& frontTreeNode.kills == prevNodes.get(j).kills
-								&& frontTreeNode.deaths == prevNodes.get(j).deaths
-								&& frontTreeNode.neoDamage == prevNodes.get(j).neoDamage) {
-							// ignore this path
-							repeated = true;
-							break;
-						}
-					}
-					*/
 					if (repeated == false) {
 						if (visualize) {
 							System.out.println("Following this action will lead to a repeated state so I ignored it ");
@@ -599,7 +530,6 @@ public abstract class GeneralSearch {
 						result += "No Solution";
 						return "No Solution";
 					}
-					finalGrid = frontTreeNode.grid;
 				}
 				k++;
 			}

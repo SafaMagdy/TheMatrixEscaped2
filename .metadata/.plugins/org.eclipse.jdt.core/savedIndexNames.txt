@@ -2,7 +2,6 @@ INDEX VERSION 1.131+C:\Users\safam\Desktop\9th Semester\ArtificialIntelligence\P
 2471507587.index
 1399776246.index
 1690934254.index
-2466290925.index
 2482442877.index
 2281782965.index
 2683640736.index

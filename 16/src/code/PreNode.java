@@ -62,7 +62,7 @@ public class PreNode implements Comparable<PreNode> {
 				return -1;
 			return 0;
 		}else {
-			//Astar
+			//A star
 			if(this.actualCost + this.hCost > o.actualCost + o.hCost)
 				return 1;
 			else if(this.actualCost + this.hCost < o.actualCost + o.hCost)
