@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="TestMatrixPublic" project="16" tests="6" started="6" failures="0" errors="0" ignored="0">
+  <testsuite name="tests.TestMatrixPublic" time="2.732" displayname="TestMatrixPublic" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]">
+    <testcase name="testd0" classname="tests.TestMatrixPublic" time="0.121" displayname="testd0" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testd0(tests.TestMatrixPublic)]"/>
+    <testcase name="testd1" classname="tests.TestMatrixPublic" time="0.06" displayname="testd1" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testd1(tests.TestMatrixPublic)]"/>
+    <testcase name="testd2" classname="tests.TestMatrixPublic" time="0.034" displayname="testd2" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testd2(tests.TestMatrixPublic)]"/>
+    <testcase name="testd3" classname="tests.TestMatrixPublic" time="2.37" displayname="testd3" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testd3(tests.TestMatrixPublic)]"/>
+    <testcase name="testd5" classname="tests.TestMatrixPublic" time="0.013" displayname="testd5" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testd5(tests.TestMatrixPublic)]"/>
+    <testcase name="testd6" classname="tests.TestMatrixPublic" time="0.133" displayname="testd6" uniqueid="[engine:junit-vintage]/[runner:tests.TestMatrixPublic]/[test:testd6(tests.TestMatrixPublic)]"/>
+  </testsuite>
+</testrun>

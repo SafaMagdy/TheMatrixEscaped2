@@ -427,7 +427,7 @@ public abstract class GeneralSearch {
 					frontTreeNode.actualCost = frontPreNode.actualCost;
 					// check if gameOver
 					if (gameOver(frontTreeNode.neoDamage)) {
-						//System.out.println("Game Over at this path");
+						System.out.println("Game Over at this path");
 						continue;
 					}
 
@@ -440,7 +440,7 @@ public abstract class GeneralSearch {
 						TreeNode p = frontTreeNode;
 						double pathCost = 0;
 						while (p != null) {
-							//System.out.println(p.operator);
+							System.out.println(p.operator);
 							goalPath.add(p.operator);
 							pathCost += p.actualCost;
 							p = p.parent;

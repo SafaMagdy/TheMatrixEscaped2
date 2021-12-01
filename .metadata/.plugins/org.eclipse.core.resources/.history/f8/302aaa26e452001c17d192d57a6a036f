@@ -427,7 +427,7 @@ public abstract class GeneralSearch {
 					frontTreeNode.actualCost = frontPreNode.actualCost;
 					// check if gameOver
 					if (gameOver(frontTreeNode.neoDamage)) {
-						//System.out.println("Game Over at this path");
+						System.out.println("Game Over at this path");
 						continue;
 					}
 
@@ -440,7 +440,7 @@ public abstract class GeneralSearch {
 						TreeNode p = frontTreeNode;
 						double pathCost = 0;
 						while (p != null) {
-							//System.out.println(p.operator);
+							System.out.println(p.operator);
 							goalPath.add(p.operator);
 							pathCost += p.actualCost;
 							p = p.parent;
@@ -452,7 +452,6 @@ public abstract class GeneralSearch {
 								result += goalPath.get(z) + ",";
 							}
 						}
-						System.out.println("path cost: " + pathCost);
 						return result += ";" + frontTreeNode.deaths + ";" + frontTreeNode.kills + ";"
 								+ prevNodes.size();
 					}
@@ -510,8 +509,7 @@ public abstract class GeneralSearch {
 						if (!(possibleActions.get(j).contains("kill"))) {
 							String[] pa = possibleActions.get(j).split(",");
 							Location affected = new Location(Integer.parseInt(pa[1]), Integer.parseInt(pa[2]));
-							double actualCost = calculateActualCost(frontTreeNode, pa[0]);
-							PreNode pn = new PreNode(pa[0], affected, frontTreeNode, actualCost, 0, strategy);
+							PreNode pn = new PreNode(pa[0], affected, frontTreeNode, 0, 0, strategy);
 							if (pn.depth > k) {
 								stop = true;
 								break;
@@ -521,8 +519,7 @@ public abstract class GeneralSearch {
 							// enqueue once and handle number of kills inside update
 							String[] pk = possibleActions.get(j).split(";");
 							String[] pa = pk[0].split(",");
-							double actualCost = calculateActualCost(frontTreeNode, pa[0]);
-							PreNode pn = new PreNode(pa[0], frontTreeNode.myLoc, frontTreeNode, actualCost, 0, strategy);
+							PreNode pn = new PreNode(pa[0], frontTreeNode.myLoc, frontTreeNode, 0, 0, strategy);
 							if (pn.depth > k) {
 								stop = true;
 								break;

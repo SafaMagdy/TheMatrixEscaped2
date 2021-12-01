@@ -427,7 +427,7 @@ public abstract class GeneralSearch {
 					frontTreeNode.actualCost = frontPreNode.actualCost;
 					// check if gameOver
 					if (gameOver(frontTreeNode.neoDamage)) {
-						//System.out.println("Game Over at this path");
+						System.out.println("Game Over at this path");
 						continue;
 					}
 
