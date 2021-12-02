@@ -1624,7 +1624,7 @@ public abstract class GeneralSearch {
 		}
 
 
-		cost = (deaths * deathWeight) + (hostages.size() * 2);
+		cost = (deaths * deathWeight) + (hostages.size() * 2)1;
 		// cost = (deaths * deathWeight) + (killNumAg * killAgentWeight) +
 		// (killNumMutant * killMutantWeight)
 		// + (2 * (gridHostages.size() + carried.size()));

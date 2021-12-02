@@ -827,7 +827,7 @@ public class TestMatrixPublic {
 
 	}
 	*/
-	/*
+	
 	@Test(timeout = 400000)
 	public void testhz10() throws Exception {
 		String solution = Matrix.solve(grid10, "AS2", false);
@@ -838,7 +838,7 @@ public class TestMatrixPublic {
 		//left,up,carry,down,right,right,down,right,carry,down,carry,down,carry,kill,left,left,drop;0;1;2130
 	}
 
-	*/
+	
 	 static class TH {
 			int m;
 			int n;

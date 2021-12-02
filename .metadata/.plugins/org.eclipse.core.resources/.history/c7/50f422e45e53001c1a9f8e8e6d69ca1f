@@ -811,8 +811,8 @@ public class TestMatrixPublic {
 		 //drop;0;0;1836
 		 
 	}
-	
-	
+	*/
+	/*
 	@Test(timeout = 400000)
 	public void testh9() throws Exception {
 		String solution = Matrix.solve(grid9, "AS2", false);
@@ -826,8 +826,7 @@ public class TestMatrixPublic {
 
 
 	}
-	*/
-	/*
+
 	@Test(timeout = 400000)
 	public void testhz10() throws Exception {
 		String solution = Matrix.solve(grid10, "AS2", false);

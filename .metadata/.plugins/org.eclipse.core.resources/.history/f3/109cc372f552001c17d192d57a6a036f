@@ -12,6 +12,8 @@ import code.Queue.*;
 
 public abstract class GeneralSearch {
 
+	// habdyn el cost
+
 	// general search method==> returns the string required in the pdf
 	public static String generalSearch(String grid, String strategy, boolean visualize) {
 		if (!(strategy.equals("ID"))) {

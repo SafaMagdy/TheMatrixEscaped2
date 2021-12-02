@@ -374,7 +374,7 @@ public class TestMatrixPublic {
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
 		//passed
 	}
-	
+	*/
 	@Test(timeout = 10000)
 	public void testf0() throws Exception {
 		String solution = Matrix.solve(grid0, "GR2", false);
@@ -464,7 +464,7 @@ public class TestMatrixPublic {
 	}
 	 
 	
-	
+	/*
 	@Test(timeout = 10000)
 	public void testc0() throws Exception {
 		String solution = Matrix.solve(grid0, "UC", false);
@@ -715,9 +715,8 @@ public class TestMatrixPublic {
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid0, solution));
 		//path cost: 37.0
-		//up,carry,left,takePill,left,carry,up,drop;0;0;43
+		//up,carry,left,takePill,left,carry,up,drop;0;0;78
 	}
-	
 	
 	@Test(timeout = 10000)
 	public void testh1() throws Exception {
@@ -726,9 +725,8 @@ public class TestMatrixPublic {
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid1, solution));
 		//path cost: 106.0
-		//left,up,left,carry,left,left,down,drop,right,up,carry,down,left,drop;0;0;267
+		//left,up,left,carry,down,left,left,drop,up,right,carry,left,down,drop;0;0;363
 	}
-	
 	
 	@Test(timeout = 10000)
 	public void testh2() throws Exception {
@@ -737,7 +735,7 @@ public class TestMatrixPublic {
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid2, solution));
 		//path cost: 67.0
-		//right,right,carry,up,left,left,left,up,carry,up,drop;0;0;99
+		//right,right,carry,up,left,up,left,left,carry,up,drop;0;0;143
 	}
 	
 	
@@ -748,8 +746,8 @@ public class TestMatrixPublic {
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid3, solution));
 		//path cost: 22616.0
-		//kill,down,down,down,left,down,kill,left,kill,left,left,takePill,right,right,right,up,up,up,kill,
-		//left,kill,left,left,down,carry,up,right,right,right,down,down,right,down,drop;5;8;8464
+		//kill,down,down,down,left,down,kill,left,kill,left,left,takePill,right,right,up,right,up,up,
+		//kill,left,kill,left,left,down,carry,up,right,right,down,down,right,right,down,drop;5;8;8457
 		//msh sa7
 
 	}
@@ -762,8 +760,7 @@ public class TestMatrixPublic {
 		assertTrue("The output actions do not lead to a goal state.", solution.equals("No Solution"));
 		//passed
 	}
-	
-	
+
 	@Test(timeout = 10000)
 	public void testh5() throws Exception {
 		String solution = Matrix.solve(grid5, "AS2", false);
@@ -774,8 +771,7 @@ public class TestMatrixPublic {
 		//down,left,down,takePill,left,left,left,up,carry,down,down,down,carry,right,right,up,right,
 		//right,drop,left,left,down,carry,right,right,up,drop;0;0;322
 	}
-	
-	
+
 	@Test(timeout = 30000)
 	public void testh6() throws Exception {
 		String solution = Matrix.solve(grid6, "AS2", false);
@@ -785,7 +781,6 @@ public class TestMatrixPublic {
 		//path cost: 106.0
 		//up,carry,down,down,fly,up,up,up,carry,down,down,down,left,drop;0;0;255
 	}
-	
 	
 	@Test(timeout = 400000)
 	public void testh7() throws Exception {
@@ -798,8 +793,7 @@ public class TestMatrixPublic {
 		//left,carry,right,fly,down,down,down,drop;0;0;987
 
 	}
-	
-	
+
 	@Test(timeout = 400000)
 	public void testh8() throws Exception {
 		String solution = Matrix.solve(grid8, "AS2", false);
@@ -811,7 +805,6 @@ public class TestMatrixPublic {
 		 //drop;0;0;1836
 		 
 	}
-	
 	
 	@Test(timeout = 400000)
 	public void testh9() throws Exception {
@@ -826,8 +819,7 @@ public class TestMatrixPublic {
 
 
 	}
-	*/
-	/*
+
 	@Test(timeout = 400000)
 	public void testhz10() throws Exception {
 		String solution = Matrix.solve(grid10, "AS2", false);

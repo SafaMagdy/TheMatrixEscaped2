@@ -774,7 +774,7 @@ public class TestMatrixPublic {
 		//down,left,down,takePill,left,left,left,up,carry,down,down,down,carry,right,right,up,right,
 		//right,drop,left,left,down,carry,right,right,up,drop;0;0;322
 	}
-	
+	*/
 	
 	@Test(timeout = 30000)
 	public void testh6() throws Exception {
@@ -785,8 +785,7 @@ public class TestMatrixPublic {
 		//path cost: 106.0
 		//up,carry,down,down,fly,up,up,up,carry,down,down,down,left,drop;0;0;255
 	}
-	
-	
+	/*
 	@Test(timeout = 400000)
 	public void testh7() throws Exception {
 		String solution = Matrix.solve(grid7, "AS2", false);
@@ -798,8 +797,7 @@ public class TestMatrixPublic {
 		//left,carry,right,fly,down,down,down,drop;0;0;987
 
 	}
-	
-	
+
 	@Test(timeout = 400000)
 	public void testh8() throws Exception {
 		String solution = Matrix.solve(grid8, "AS2", false);
@@ -811,7 +809,6 @@ public class TestMatrixPublic {
 		 //drop;0;0;1836
 		 
 	}
-	
 	
 	@Test(timeout = 400000)
 	public void testh9() throws Exception {
@@ -826,8 +823,7 @@ public class TestMatrixPublic {
 
 
 	}
-	*/
-	/*
+
 	@Test(timeout = 400000)
 	public void testhz10() throws Exception {
 		String solution = Matrix.solve(grid10, "AS2", false);
